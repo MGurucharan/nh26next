@@ -1,7 +1,6 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-
 const greatThingsImg = '/assets/greatthings.png'
 const aboutus = '/assets/aboutus.png'
 const welcome = '/assets/welcome.png'
@@ -40,6 +39,32 @@ const StatCard = ({ icon, number, label }) => {
   )
 }
 
+const FeatureCard = ({ title, description, iconSrc, altText }) => {
+  return (
+    <div className="relative group bg-white/5 border border-white/20 rounded-3xl p-8 text-left backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 overflow-hidden transform-gpu flex flex-col items-center">
+      
+      <div className="relative z-20 flex flex-col items-center w-full">
+        <h3 className="text-2xl font-bold text-white text-center mb-6 font-['PPMori']">{title}</h3>
+        
+        {/* Icon Container Wrapper */}
+        <div className="relative mb-6 z-10">
+           {/* Expanding Overlay - Behind the icon box (z-0 is lowest here) */}
+           <div className="absolute inset-0 bg-white/10 rounded-2xl scale-100 group-hover:scale-[25] transition-transform duration-1000 ease-in-out origin-center z-0 pointer-events-none"></div>
+
+           {/* Actual Icon Box - Opaque Black (z-10 sits on top of overlay) */}
+           <div className="relative p-3 bg-black rounded-2xl border border-white/20 group-hover:border-white/50 transition-colors duration-300 z-10">
+             <Image src={iconSrc} alt={altText} width={48} height={48} className="w-12 h-12 brightness-0 invert" />
+           </div>
+        </div>
+        
+        <p className="text-gray-300 text-base leading-relaxed font-['PPMori'] opacity-90 text-center transition-colors duration-300 group-hover:text-white">
+          {description}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 const AboutUs = () => {
   // targets (could be fetched from an API)
   const registrationsTarget = 2000
@@ -66,7 +91,7 @@ const AboutUs = () => {
                 <path d="M8 10h8M8 14h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             }
-          />
+          />         
 
           <StatCard
             number={`${participations}+`}
@@ -90,46 +115,30 @@ const AboutUs = () => {
           />
         </div>
 
+
+
         {/* Three feature cards */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-          {/* Summary card */}
-          <div className="bg-white/5 border border-white/20 rounded-3xl p-8 text-left backdrop-blur-sm hover:bg-white/10 transition-colors duration-300">
-            <h3 className="text-2xl font-bold text-white text-center mb-6 font-['PPMori']">About NMIT Hacks</h3>
-            <div className="flex justify-center mb-6">
-              <div className="p-3 bg-black rounded-2xl border border-white/20">
-                 <Image src={aboutus} alt="About Us" width={48} height={48} className="w-12 h-12 brightness-0 invert" />
-              </div>
-            </div>
-            <p className="text-gray-300 text-base leading-relaxed font-['PPMori'] opacity-90">
-              NMIT Hacks builds a nationwide community of student innovators — connecting participants from top institutions with industry mentors. Over multiple editions we provide learning, collaboration and career-growth opportunities through a mix of digital and on-campus activities.
-            </p>
-          </div>
+          <FeatureCard 
+            title="About NMIT Hacks"
+            description="NMIT Hacks builds a nationwide community of student innovators — connecting participants from top institutions with industry mentors. Over multiple editions we provide learning, collaboration and career-growth opportunities through a mix of digital and on-campus activities."
+            iconSrc={aboutus}
+            altText="About Us"
+          />
 
-          {/* Expect Great Things */}
-          <div className="bg-white/5 border border-white/20 rounded-3xl p-8 text-left backdrop-blur-sm hover:bg-white/10 transition-colors duration-300">
-            <h3 className="text-2xl font-bold text-white text-center mb-6 font-['PPMori']">Expect Great Things</h3>
-            <div className="flex justify-center mb-6">
-                <div className="p-3 bg-black rounded-2xl border border-white/20">
-                   <Image src={greatThingsImg} alt="Expect great things" width={48} height={48} className="w-12 h-12 brightness-0 invert" />
-                </div>
-            </div>
-            <p className="text-gray-300 text-base leading-relaxed font-['PPMori'] opacity-90">
-              Mentors from industry, hands-on workshops, and curated challenges give you the tools to build, present, and scale great ideas. Expect mentorship, judged tracks, and prizes that help projects move forward.
-            </p>
-          </div>
+          <FeatureCard 
+            title="Expect Great Things"
+            description="Mentors from industry, hands-on workshops, and curated challenges give you the tools to build, present, and scale great ideas. Expect mentorship, judged tracks, and prizes that help projects move forward."
+            iconSrc={greatThingsImg}
+            altText="Expect great things"
+          />
 
-          {/* All Students Welcome */}
-          <div className="bg-white/5 border border-white/20 rounded-3xl p-8 text-left backdrop-blur-sm hover:bg-white/10 transition-colors duration-300">
-            <h3 className="text-2xl font-bold text-white text-center mb-6 font-['PPMori']">All Students Welcome!</h3>
-            <div className="flex justify-center mb-6">
-                <div className="p-3 bg-black rounded-2xl border border-white/20">
-                   <Image src={welcome} alt="All Students Welcome" width={48} height={48} className="w-12 h-12 brightness-0 invert" />
-                </div>
-            </div>
-            <p className="text-gray-300 text-base leading-relaxed font-['PPMori'] opacity-90">
-              Beginners and experienced hackers both thrive here — no entry fee required. Teams, solo participants, and students from any discipline are encouraged to join, learn, and collaborate.
-            </p>
-          </div>
+          <FeatureCard 
+            title="All Students Welcome!"
+            description="Beginners and experienced hackers both thrive here — no entry fee required. Teams, solo participants, and students from any discipline are encouraged to join, learn, and collaborate."
+            iconSrc={welcome}
+            altText="All Students Welcome"
+          />
         </div>
       </div>
     </section>
