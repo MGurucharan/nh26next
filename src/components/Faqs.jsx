@@ -63,10 +63,13 @@ const faqs = [
 
 const Faqs = () => {
     const [activeIndex, setActiveIndex] = useState(null);
+    const [showAll, setShowAll] = useState(false);
 
     const toggleFaq = (index) => {
         setActiveIndex(activeIndex === index ? null : index);
     };
+
+    const displayedFaqs = showAll ? faqs : faqs.slice(0, 6);
 
     return (
         <div className="w-full py-20 px-4 md:px-10">
@@ -74,44 +77,70 @@ const Faqs = () => {
                 Frequently Asked Questions
             </h2>
             <div className="flex flex-col w-full">
-                {faqs.map((faq, index) => (
-                    <div
-                        key={index}
-                        className="border border-gray-600 rounded-lg mb-4 overflow-hidden w-full"
-                    >
-                        <div
-                            className="flex justify-between items-center w-full p-5 cursor-pointer bg-black"
-                            onClick={() => toggleFaq(index)}
+                <AnimatePresence initial={false}>
+                    {displayedFaqs.map((faq, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                            animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
+                            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="border border-gray-600 rounded-lg overflow-hidden w-full"
                         >
-                            <h3 className="text-lg md:text-xl font-medium text-white font-['PPMori']">
-                                {faq.question}
-                            </h3>
-                            <div className="text-white text-xl font-light">
-                                {activeIndex === index ? (
-                                    <span>&#215;</span>
-                                ) : (
-                                    <span>&#43;</span>
-                                )}
+                            <div
+                                className="flex justify-between items-center w-full p-5 cursor-pointer bg-black"
+                                onClick={() => toggleFaq(index)}
+                            >
+                                <h3 className="text-lg md:text-xl font-medium text-white font-['PPMori']">
+                                    {faq.question}
+                                </h3>
+                                <div className="text-white text-xl font-light">
+                                    {activeIndex === index ? (
+                                        <span>&#215;</span>
+                                    ) : (
+                                        <span>&#43;</span>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                        <AnimatePresence>
-                            {activeIndex === index && (
-                                <motion.div
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: "auto", opacity: 1 }}
-                                    exit={{ height: 0, opacity: 0 }}
-                                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                                    className="bg-white/10"
-                                >
-                                    <p className="p-6 text-base text-white font-['PPMori']">
-                                        {faq.answer}
-                                    </p>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
-                ))}
+                            <AnimatePresence>
+                                {activeIndex === index && (
+                                    <motion.div
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: "auto", opacity: 1 }}
+                                        exit={{ height: 0, opacity: 0 }}
+                                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                                        className="bg-white/10"
+                                    >
+                                        <p className="p-6 text-base text-white font-['PPMori']">
+                                            {faq.answer}
+                                        </p>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
             </div>
+
+            {!showAll ? (
+                <div className="flex justify-center mt-4">
+                    <button
+                        onClick={() => setShowAll(true)}
+                        className="px-8 py-1 bg-white text-black rounded-full font-bold text-lg hover:bg-neutral-200 cursor-pointer transition-colors"
+                    >
+                        More
+                    </button>
+                </div>
+            ) : (
+                <div className="flex justify-center mt-4">
+                    <button
+                        onClick={() => setShowAll(false)}
+                        className="px-8 py-1 bg-white text-black rounded-full font-bold text-lg hover:bg-neutral-200 cursor-pointer transition-colors"
+                    >
+                        Less
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

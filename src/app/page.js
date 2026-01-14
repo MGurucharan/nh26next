@@ -2,13 +2,14 @@ import React from 'react'
 import Hero from '../components/Hero';
 import Navbar from '../components/Navbar';
 import AboutUs from '../components/AboutUs';
-import Tracks2 from '../components/Tracks2';
+// import Tracks2 from '../components/Tracks2';
 import Prizes from '../components/Prizes';
 import Sponsors from '@/components/Sponsors';
 import Faqs from '@/components/Faqs';
 import Teams from '@/components/Teams';
 import Teams2 from '@/components/Teams2';
 import { FlipCard } from '@/components/animate-ui/components/community/flip-card';
+import Tracks3 from '../components/Tracks3';
 
 // --- ADD THIS DATA OBJECT ---
 const data = {
@@ -33,7 +34,7 @@ const Home = () => {
         <Hero/>
       </div>
       <AboutUs />
-      <Tracks2/>
+      <Tracks3/>
       <Prizes />
       <Sponsors 
         textAutoHide={true}
