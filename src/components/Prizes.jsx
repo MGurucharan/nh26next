@@ -50,7 +50,7 @@ const Prizes = () => {
         rotationY: 360, 
         duration: 1,
         ease: "power2.inOut"
-    }, ">0.5") // 0.5s delay AFTER bars finish
+    }, "<0.5") // 0.5s delay AFTER bars finish
 
     // Silver (2nd Place) - Second
     tl.to(coin2.current, {
@@ -58,7 +58,7 @@ const Prizes = () => {
         rotationY: 360,
         duration: 1,
         ease: "power2.inOut"
-    }, "-=0.5") 
+    }, "-=0.65") 
 
     // Bronze (3rd Place) - Third
     tl.to(coin3.current, {
@@ -66,7 +66,7 @@ const Prizes = () => {
         rotationY: 360,
         duration: 1,
         ease: "power2.inOut"
-    }, "-=0.5")
+    }, "-=0.65")
 
     // 4. Levitate & Glow Loop
     // Create floating animation

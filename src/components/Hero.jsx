@@ -1,3 +1,7 @@
+"use client";
+import { CldImage } from 'next-cloudinary';
+
+
 import React from 'react';
 import Navbar from './Navbar';
 
@@ -16,10 +20,12 @@ const Hero = () => {
           
           {/* Logo */}
           <div className="mb-2 md:mb-6 xl:mb-4 animate-fade-in-up">
-            <img 
-              src="/assets/hero logo.png" 
-              alt="NMIT Hacks Logo" 
-              className="h-16 md:h-40 xl:h-27 w-auto object-contain brightness-0 invert" 
+            <CldImage
+              src="hero_logo_wjbqzf"
+              alt="NMIT Hacks Logo"
+              width={400}
+              height={160}
+              className="h-16 md:h-40 xl:h-27 w-auto object-contain brightness-0 invert"
             />
           </div>
 

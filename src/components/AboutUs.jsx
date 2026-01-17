@@ -1,10 +1,331 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+
 const greatThingsImg = '/assets/greatthings.png'
 const aboutus = '/assets/aboutus.png'
 const welcome = '/assets/welcome.png'
+const contactFormIcon = '/assets/contact-form.png'
+const raiseHandIcon = '/assets/raise-hand.png'
+const socialMediaIcon = '/assets/social-media.png'
 
+// --- 1. FUZZY TEXT COMPONENT (Your provided code) ---
+const FuzzyText = ({
+  children,
+  fontSize = 'clamp(2rem, 10vw, 10rem)',
+  fontWeight = 900,
+  fontFamily = 'inherit',
+  color = '#fff',
+  enableHover = true,
+  baseIntensity = 0.18,
+  hoverIntensity = 0.5,
+  fuzzRange = 30,
+  fps = 60,
+  direction = 'horizontal',
+  transitionDuration = 0,
+  clickEffect = false,
+  glitchMode = false,
+  glitchInterval = 2000,
+  glitchDuration = 200,
+  gradient = null,
+  letterSpacing = 0,
+  className = '',
+  hovered // New prop to control hover state externally
+}) => {
+  const canvasRef = useRef(null);
+  const hoveredRef = useRef(hovered);
+  
+  useEffect(() => {
+    hoveredRef.current = hovered;
+  }, [hovered]);
+
+  useEffect(() => {
+    let animationFrameId;
+    let isCancelled = false;
+    let glitchTimeoutId;
+    let glitchEndTimeoutId;
+    let clickTimeoutId;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const init = async () => {
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const computedFontFamily =
+        fontFamily === 'inherit' ? window.getComputedStyle(canvas).fontFamily || 'sans-serif' : fontFamily;
+
+      const fontSizeStr = typeof fontSize === 'number' ? `${fontSize}px` : fontSize;
+      const fontString = `${fontWeight} ${fontSizeStr} ${computedFontFamily}`;
+
+      try {
+        await document.fonts.load(fontString);
+      } catch {
+        await document.fonts.ready;
+      }
+      if (isCancelled) return;
+
+      let numericFontSize;
+      if (typeof fontSize === 'number') {
+        numericFontSize = fontSize;
+      } else {
+        const temp = document.createElement('span');
+        temp.style.fontSize = fontSize;
+        document.body.appendChild(temp);
+        const computedSize = window.getComputedStyle(temp).fontSize;
+        numericFontSize = parseFloat(computedSize);
+        document.body.removeChild(temp);
+      }
+
+      const text = React.Children.toArray(children).join('');
+
+      const offscreen = document.createElement('canvas');
+      const offCtx = offscreen.getContext('2d');
+      if (!offCtx) return;
+
+      offCtx.font = `${fontWeight} ${fontSizeStr} ${computedFontFamily}`;
+      offCtx.textBaseline = 'alphabetic';
+
+      let totalWidth = 0;
+      if (letterSpacing !== 0) {
+        for (const char of text) {
+          totalWidth += offCtx.measureText(char).width + letterSpacing;
+        }
+        totalWidth -= letterSpacing;
+      } else {
+        totalWidth = offCtx.measureText(text).width;
+      }
+
+      const metrics = offCtx.measureText(text);
+      const actualLeft = metrics.actualBoundingBoxLeft ?? 0;
+      const actualRight = letterSpacing !== 0 ? totalWidth : (metrics.actualBoundingBoxRight ?? metrics.width);
+      const actualAscent = metrics.actualBoundingBoxAscent ?? numericFontSize;
+      const actualDescent = metrics.actualBoundingBoxDescent ?? numericFontSize * 0.2;
+
+      const textBoundingWidth = Math.ceil(letterSpacing !== 0 ? totalWidth : actualLeft + actualRight);
+      const tightHeight = Math.ceil(actualAscent + actualDescent);
+
+      const extraWidthBuffer = 10;
+      const offscreenWidth = textBoundingWidth + extraWidthBuffer;
+
+      offscreen.width = offscreenWidth;
+      offscreen.height = tightHeight;
+
+      const xOffset = extraWidthBuffer / 2;
+      offCtx.font = `${fontWeight} ${fontSizeStr} ${computedFontFamily}`;
+      offCtx.textBaseline = 'alphabetic';
+
+      if (gradient && Array.isArray(gradient) && gradient.length >= 2) {
+        const grad = offCtx.createLinearGradient(0, 0, offscreenWidth, 0);
+        gradient.forEach((c, i) => grad.addColorStop(i / (gradient.length - 1), c));
+        offCtx.fillStyle = grad;
+      } else {
+        offCtx.fillStyle = color;
+      }
+
+      if (letterSpacing !== 0) {
+        let xPos = xOffset;
+        for (const char of text) {
+          offCtx.fillText(char, xPos, actualAscent);
+          xPos += offCtx.measureText(char).width + letterSpacing;
+        }
+      } else {
+        offCtx.fillText(text, xOffset - actualLeft, actualAscent);
+      }
+
+      const horizontalMargin = fuzzRange + 20;
+      const verticalMargin = direction === 'vertical' || direction === 'both' ? fuzzRange + 10 : 0;
+      canvas.width = offscreenWidth + horizontalMargin * 2;
+      canvas.height = tightHeight + verticalMargin * 2;
+      ctx.translate(horizontalMargin, verticalMargin);
+
+      const interactiveLeft = horizontalMargin + xOffset;
+      const interactiveTop = verticalMargin;
+      const interactiveRight = interactiveLeft + textBoundingWidth;
+      const interactiveBottom = interactiveTop + tightHeight;
+
+      let isHovering = false;
+      let isClicking = false;
+      let isGlitching = false;
+      let currentIntensity = baseIntensity;
+      let targetIntensity = baseIntensity;
+      let lastFrameTime = 0;
+      const frameDuration = 1000 / fps;
+
+      const startGlitchLoop = () => {
+        if (!glitchMode || isCancelled) return;
+        glitchTimeoutId = setTimeout(() => {
+          if (isCancelled) return;
+          isGlitching = true;
+          glitchEndTimeoutId = setTimeout(() => {
+            isGlitching = false;
+            startGlitchLoop();
+          }, glitchDuration);
+        }, glitchInterval);
+      };
+
+      if (glitchMode) startGlitchLoop();
+
+      const run = timestamp => {
+        if (isCancelled) return;
+
+        if (timestamp - lastFrameTime < frameDuration) {
+          animationFrameId = window.requestAnimationFrame(run);
+          return;
+        }
+        lastFrameTime = timestamp;
+
+        ctx.clearRect(
+          -fuzzRange - 20,
+          -fuzzRange - 10,
+          offscreenWidth + 2 * (fuzzRange + 20),
+          tightHeight + 2 * (fuzzRange + 10)
+        );
+
+        if (isClicking) {
+          targetIntensity = 1;
+        } else if (isGlitching) {
+          targetIntensity = 1;
+        } else if (isHovering || hoveredRef.current) {
+          targetIntensity = hoverIntensity;
+        } else {
+          targetIntensity = baseIntensity;
+        }
+
+        if (transitionDuration > 0) {
+          const step = 1 / (transitionDuration / frameDuration);
+          if (currentIntensity < targetIntensity) {
+            currentIntensity = Math.min(currentIntensity + step, targetIntensity);
+          } else if (currentIntensity > targetIntensity) {
+            currentIntensity = Math.max(currentIntensity - step, targetIntensity);
+          }
+        } else {
+          currentIntensity = targetIntensity;
+        }
+
+        for (let j = 0; j < tightHeight; j++) {
+          let dx = 0,
+            dy = 0;
+          if (direction === 'horizontal' || direction === 'both') {
+            dx = Math.floor(currentIntensity * (Math.random() - 0.5) * fuzzRange);
+          }
+          if (direction === 'vertical' || direction === 'both') {
+            dy = Math.floor(currentIntensity * (Math.random() - 0.5) * fuzzRange * 0.5);
+          }
+          ctx.drawImage(offscreen, 0, j, offscreenWidth, 1, dx, j + dy, offscreenWidth, 1);
+        }
+        animationFrameId = window.requestAnimationFrame(run);
+      };
+
+      animationFrameId = window.requestAnimationFrame(run);
+
+      const isInsideTextArea = (x, y) => {
+        return x >= interactiveLeft && x <= interactiveRight && y >= interactiveTop && y <= interactiveBottom;
+      };
+
+      const handleMouseMove = e => {
+        if (!enableHover) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        isHovering = isInsideTextArea(x, y);
+      };
+
+      const handleMouseLeave = () => {
+        isHovering = false;
+      };
+
+      const handleClick = () => {
+        if (!clickEffect) return;
+        isClicking = true;
+        clearTimeout(clickTimeoutId);
+        clickTimeoutId = setTimeout(() => {
+          isClicking = false;
+        }, 150);
+      };
+
+      const handleTouchMove = e => {
+        if (!enableHover) return;
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+        isHovering = isInsideTextArea(x, y);
+      };
+
+      const handleTouchEnd = () => {
+        isHovering = false;
+      };
+
+      if (enableHover) {
+        canvas.addEventListener('mousemove', handleMouseMove);
+        canvas.addEventListener('mouseleave', handleMouseLeave);
+        canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+        canvas.addEventListener('touchend', handleTouchEnd);
+      }
+
+      if (clickEffect) {
+        canvas.addEventListener('click', handleClick);
+      }
+
+      const cleanup = () => {
+        window.cancelAnimationFrame(animationFrameId);
+        clearTimeout(glitchTimeoutId);
+        clearTimeout(glitchEndTimeoutId);
+        clearTimeout(clickTimeoutId);
+        if (enableHover) {
+          canvas.removeEventListener('mousemove', handleMouseMove);
+          canvas.removeEventListener('mouseleave', handleMouseLeave);
+          canvas.removeEventListener('touchmove', handleTouchMove);
+          canvas.removeEventListener('touchend', handleTouchEnd);
+        }
+        if (clickEffect) {
+          canvas.removeEventListener('click', handleClick);
+        }
+      };
+
+      canvas.cleanupFuzzyText = cleanup;
+    };
+
+    init();
+
+    return () => {
+      isCancelled = true;
+      window.cancelAnimationFrame(animationFrameId);
+      clearTimeout(glitchTimeoutId);
+      clearTimeout(glitchEndTimeoutId);
+      clearTimeout(clickTimeoutId);
+      if (canvas && canvas.cleanupFuzzyText) {
+        canvas.cleanupFuzzyText();
+      }
+    };
+  }, [
+    children,
+    fontSize,
+    fontWeight,
+    fontFamily,
+    color,
+    enableHover,
+    baseIntensity,
+    hoverIntensity,
+    fuzzRange,
+    fps,
+    direction,
+    transitionDuration,
+    clickEffect,
+    glitchMode,
+    glitchInterval,
+    glitchDuration,
+    gradient,
+    letterSpacing
+  ]);
+
+  return <canvas ref={canvasRef} className={className} />;
+};
+
+
+// --- 2. COUNT UP HOOK ---
 function useCountUp(target, duration = 1500) {
   const [value, setValue] = useState(0)
   const rafRef = useRef()
@@ -23,12 +344,35 @@ function useCountUp(target, duration = 1500) {
   return value
 }
 
+// --- 3. STAT CARD WITH FUZZY TEXT & ICONS ---
 const StatCard = ({ icon, number, label }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  
   return (
-    <div className="flex-1 mr-5 border border-white/20 rounded-3xl p-6 text-left bg-white/5 backdrop-blur-sm hover:border-white/40 transition-all duration-300">
+    <div 
+      className="flex-1 mr-5 border border-white/20 rounded-3xl p-6 text-left bg-white/5 backdrop-blur-sm hover:border-white/40 transition-all duration-300"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-4xl font-bold text-white font-['PPMori']">{number}</h3>
+          {/* We use the FuzzyText component here instead of a simple h3 */}
+          {/* fontSize={36} matches the original text-4xl size approximately */}
+          <div className="mb-1 -ml-8"> 
+            <FuzzyText 
+              fontSize={36} 
+              fontWeight={700} 
+              fontFamily="inherit" 
+              color="#ff0000" 
+              className="font-['PPMori']"
+              enableHover={false} // Disable internal hover, use external control
+              hovered={isHovered} // Pass external hover state
+              fuzzRange={12} // Moderate fuzz
+            >
+              {number.toString()}
+            </FuzzyText>
+          </div>
+          
           <p className="mt-2 text-gray-300 font-['PPMori']">{label}</p>
         </div>
         <div className="w-16 h-16 flex items-center justify-center bg-white/10 rounded-2xl border border-white/10">
@@ -41,19 +385,26 @@ const StatCard = ({ icon, number, label }) => {
 
 const FeatureCard = ({ title, description, iconSrc, altText }) => {
   return (
-    <div className="relative group bg-white/5 border border-white/20 rounded-3xl p-8 text-left backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 overflow-hidden transform-gpu flex flex-col items-center">
+    <div className="relative group bg-white/5 border border-[#FF0000] border-opacity-30 rounded-3xl p-8 text-left backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,0,0,0.5)] overflow-hidden transform-gpu flex flex-col items-center">
       
       <div className="relative z-20 flex flex-col items-center w-full">
-        <h3 className="text-2xl font-bold text-white text-center mb-6 font-['PPMori']">{title}</h3>
+        <h3 className="text-2xl font-bold text-[#E0E7FF] text-center mb-6 font-['PPMori']">{title}</h3>
         
         {/* Icon Container Wrapper */}
         <div className="relative mb-6 z-10">
-           {/* Expanding Overlay - Behind the icon box (z-0 is lowest here) */}
+           {/* Expanding Overlay */}
            <div className="absolute inset-0 bg-white/10 rounded-2xl scale-100 group-hover:scale-[25] transition-transform duration-1000 ease-in-out origin-center z-0 pointer-events-none"></div>
 
-           {/* Actual Icon Box - Opaque Black (z-10 sits on top of overlay) */}
-           <div className="relative p-3 bg-black rounded-2xl border border-white/20 group-hover:border-white/50 transition-colors duration-300 z-10">
-             <Image src={iconSrc} alt={altText} width={48} height={48} className="w-12 h-12 brightness-0 invert" />
+           {/* Actual Icon Box */}
+           <div className="relative p-3 bg-white rounded-2xl border border-white/20 group-hover:border-white/50 transition-colors duration-300 z-10">
+             <Image 
+               src={iconSrc} 
+               alt={altText} 
+               width={48} 
+               height={48} 
+               className="w-12 h-12" 
+               style={{ filter: 'brightness(0) saturate(100%) invert(18%) sepia(93%) saturate(7383%) hue-rotate(357deg) brightness(102%) contrast(119%)' }} 
+             />
            </div>
         </div>
         
@@ -66,7 +417,6 @@ const FeatureCard = ({ title, description, iconSrc, altText }) => {
 }
 
 const AboutUs = () => {
-  // targets (could be fetched from an API)
   const registrationsTarget = 2000
   const participationsTarget = 180
   const reachTarget = 150000
@@ -76,48 +426,58 @@ const AboutUs = () => {
   const reach = useCountUp(reachTarget, 2500)
 
   return (
-    <section className="w-full py-20 bg-black text-white relative">
+    <section className="w-full py-20 bg-[#02093D] text-white relative">
       
       <div className="max-w-[90vw] xl:max-w-7xl mx-auto px-6 relative z-10">
         <h2 className="text-5xl font-bold text-center text-white mb-16 font-['PPMori'] tracking-tight">About Us</h2>
 
         <div className="flex flex-col lg:flex-row items-stretch gap-6 lg:gap-0 mb-12">
+          {/* STAT CARD 1: Registrations */}
           <StatCard
             number={`${registrations}+`}
             label="Registrations"
             icon={
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-white" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2a2 2 0 012 2v1h4a1 1 0 011 1v11a2 2 0 01-2 2H7a2 2 0 01-2-2V6a1 1 0 011-1h4V4a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M8 10h8M8 14h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <Image 
+                src={contactFormIcon} 
+                alt="Registrations" 
+                width={32} 
+                height={32} 
+                className="w-8 h-8 brightness-0 invert" 
+              />
             }
-          />         
+          />        
 
+          {/* STAT CARD 2: Participations */}
           <StatCard
             number={`${participations}+`}
             label="On-Campus Participations"
             icon={
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-white" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2l3 6 6 1-4 4 1 6-6-3-6 3 1-6-4-4 6-1 3-6z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <Image 
+                src={raiseHandIcon} 
+                alt="On-Campus Participations" 
+                width={32} 
+                height={32} 
+                className="w-8 h-8 brightness-0 invert" 
+              />
             }
           />
 
+          {/* STAT CARD 3: Reach */}
           <StatCard
             number={`${reach}+`}
             label="Reach on Social Media"
             icon={
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-white" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 11-7.6-12.3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M22 4v6h-6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <Image 
+                src={socialMediaIcon} 
+                alt="Reach on Social Media" 
+                width={32} 
+                height={32} 
+                className="w-8 h-8 brightness-0 invert" 
+              />
             }
           />
         </div>
 
-
-
-        {/* Three feature cards */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
           <FeatureCard 
             title="About NMIT Hacks"
