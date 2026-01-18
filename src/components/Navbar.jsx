@@ -35,7 +35,7 @@ const Navbar = () => {
     <nav
       className={`
         sticky
-        top-15 left-0 right-0 z-50
+        top-3 left-0 right-0 z-50
         flex items-start
         transition-all duration-500 ease-in-out
       `}
@@ -49,13 +49,13 @@ const Navbar = () => {
           md:ml-[50%] md:w-auto md:-translate-x-1/2 md:pr-15
           ${
             isScrolled
-              ? 'bg-black/10 backdrop-blur-[15px] border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
-              : 'bg-black/60 backdrop-blur-md border-white/20 shadow-none'
+              ? 'bg-[#02093D/10] backdrop-blur-[15px] border-[#ff0000] shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
+              : 'bg-[#02093D] backdrop-blur-md border-[#ff0000] shadow-none'
           }
         `}
         style={
           isScrolled
-            ? { background: 'rgba(0,0,0,0.25)' }
+            ? { background: 'bg-[#02093D/40]' }
             : undefined
         }
       >
@@ -65,7 +65,7 @@ const Navbar = () => {
             <img
               src="/assets/navbar logo.png"
               alt="Logo"
-              className="h-8 w-auto object-contain brightness-0 invert"
+              className="h-8 w-auto object-contain"
             />
           </Link>
         </div>
@@ -76,7 +76,7 @@ const Navbar = () => {
             <li key={item.name}>
               <Link
                 href={item.href}
-                className="text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200 uppercase tracking-wide font-['PPMori'] whitespace-nowrap"
+                className="text-sm font-bold text-gray-300 hover:text-[#ff0000] transition-colors duration-200 uppercase tracking-wide font-['PPMori'] whitespace-nowrap"
               >
                 {item.name}
               </Link>
@@ -104,13 +104,19 @@ const Navbar = () => {
 
       {/* Mobile Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 bg-black/80 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-xl flex flex-col gap-2 z-40 md:hidden w-[70vw] max-w-sm animate-fade-in-up">
+        <div className={`absolute top-full left-1/2 -translate-x-1/2 mt-4 rounded-2xl p-4 flex flex-col gap-2 z-40 md:hidden w-[70vw] max-w-sm animate-fade-in-up transition-all duration-500
+          ${
+            isScrolled
+              ? 'bg-[#02093D]/80 backdrop-blur-[15px] border border-[#ff0000] shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
+              : 'bg-[#02093D] backdrop-blur-md border border-[#ff0000] shadow-xl'
+          }
+        `}>
           {navItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
               onClick={() => setIsOpen(false)}
-              className="text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-all duration-200 uppercase tracking-wide font-['PPMori'] block text-center"
+              className="text-sm font-medium text-gray-300 hover:text-[#ff0000] px-4 py-3 rounded-lg transition-all duration-200 uppercase tracking-wide font-['PPMori'] block text-center"
             >
               {item.name}
             </Link>

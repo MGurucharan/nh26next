@@ -7,7 +7,7 @@ import Navbar from './Navbar';
 
 const Hero = () => {
   return (
-    <div className="min-h-screen w-full bg-black text-white flex flex-col items-center justify-center relative p-4 md:p-8">
+    <div className="min-h-screen w-full bg-[#010524ff] text-white flex flex-col items-center justify-center relative p-4 md:p-8">
       {/* Outer Glow/Border Effect (Optional, staying strict B&W so just a border) */}
       <div className="w-[90vw] md:w-[80vw] lg:max-w-5xl xl:w-full xl:max-w-[95vw] min-h-[60vh] md:min-h-[80vh] xl:min-h-[85vh] rounded-[3rem] xl:rounded-3xl flex flex-col items-center relative overflow-visible mt-8 md:mt-0 transition-all duration-300">
         

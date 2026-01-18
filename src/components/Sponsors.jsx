@@ -494,7 +494,7 @@ const Sponsors = ({
   const shouldDisableAnimations = disableAnimations || isMobile;
 
   return (
-    <>
+    <section className="w-full py-20 bg-[#010524ff] relative">
       <style>
         {`
           .bento-section {
@@ -504,12 +504,23 @@ const Sponsors = ({
             --glow-radius: 200px;
             --glow-color: ${glowColor};
             --border-color: #808080;
-            --background-dark: #000000;
+            --background-dark: #02093D;
             --white: hsl(0, 0%, 100%);
             --purple-primary: rgba(0, 0, 0, 1);
             --purple-glow: rgba(0, 0, 0, 0.2);
             --purple-border: rgba(0, 0, 0, 0.8);
           }
+
+          /* Default state: red border */
+          .card {
+            border-color: #ff0000 !important;
+          }
+
+          /* Hover state: remove red border */
+          .card:hover {
+            border-color: #808080 !important;
+          }
+
           
           .card-responsive {
             display: flex;
@@ -650,7 +661,7 @@ const Sponsors = ({
 
       <BentoCardGrid gridRef={gridRef}>
         {/* Title inside Grid for perfect alignment */}
-        <h2 className="text-3xl md:text-5xl font-bold text-center text-white mb-8 z-30 relative font-['PPMori'] tracking-tight pt-4 w-full">
+        <h2 className="text-3xl md:text-5xl font-bold text-center text-[#ff0000] mb-8 z-30 relative font-['PPMori'] tracking-tight pt-4 w-full">
             Sponsors
         </h2>
 
@@ -750,7 +761,7 @@ const Sponsors = ({
           ))}
         </div>
       </BentoCardGrid>
-    </>
+    </section>
   );
 };
 

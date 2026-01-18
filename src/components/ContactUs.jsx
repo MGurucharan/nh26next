@@ -5,10 +5,10 @@ import { BsHeartFill } from "react-icons/bs";
 
 const ContactUs = () => {
   return (
-    <section className="min-h-screen bg-black text-white py-12 px-4 flex flex-col items-center justify-between relative overflow-hidden">
+    <section className="min-h-screen bg-[#010524ff] text-white py-12 px-4 flex flex-col items-center justify-between relative overflow-hidden">
       
       {/* 1. Header Section */}
-      <h2 className="text-3xl md:text-5xl font-bold mb-8 md:mb-12 text-center text-white">
+      <h2 className="text-3xl md:text-5xl font-bold mb-8 md:mb-12 text-center text-[#ff0000]">
         Contact Us
       </h2>
 
@@ -66,11 +66,11 @@ const ContactUs = () => {
         </button>
 
         <p className="mt-2 text-gray-300 text-center">
-          For event-related queries, contact: <a href="mailto:hackathon@nmit.ac.in" className="text-white font-bold hover:underline">hackathon@nmit.ac.in</a>
+          For event-related queries, contact: <a href="mailto:hackathon@nmit.ac.in" className="text-[#ff0000] font-bold hover:underline">hackathon@nmit.ac.in</a>
         </p>
 
         <p className="mt-6 md:mt-8 flex items-center gap-2 text-xs md:text-sm text-gray-400">
-          Made with <BsHeartFill className="text-white animate-pulse" /> by NMIT Hacks
+          Made with <BsHeartFill className="text-[#ff0000] animate-pulse" /> by NMIT Hacks
         </p>
       </div>
 

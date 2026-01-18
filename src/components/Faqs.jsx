@@ -72,8 +72,8 @@ const Faqs = () => {
     const displayedFaqs = showAll ? faqs : faqs.slice(0, 6);
 
     return (
-        <div className="w-full py-20 px-4 md:px-10">
-            <h2 className="text-4xl md:text-5xl font-bold text-center text-[#FFFFFF] mb-12 font-['PPMori']">
+        <div className="w-full py-20 px-4 md:px-10 bg-[#010524ff]">
+            <h2 className="text-4xl md:text-5xl font-bold text-center text-[#FF0000] mb-12 font-['PPMori']">
                 Frequently Asked Questions
             </h2>
             <div className="flex flex-col w-full">
@@ -85,13 +85,13 @@ const Faqs = () => {
                             animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
                             exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                             transition={{ duration: 0.3 }}
-                            className="border border-gray-600 rounded-lg overflow-hidden w-full"
+                            className="border border-[#ff0000] rounded-lg overflow-hidden w-full"
                         >
                             <div
-                                className="flex justify-between items-center w-full p-5 cursor-pointer bg-black"
+                                className="flex justify-between items-center w-full p-5 cursor-pointer bg-[#02093D]"
                                 onClick={() => toggleFaq(index)}
                             >
-                                <h3 className="text-lg md:text-xl font-medium text-white font-['PPMori']">
+                                <h3 className={`text-lg md:text-xl font-medium font-['PPMori'] ${activeIndex === index ? 'text-[#ff0000]' : 'text-white'}`}>
                                     {faq.question}
                                 </h3>
                                 <div className="text-white text-xl font-light">
@@ -109,7 +109,7 @@ const Faqs = () => {
                                         animate={{ height: "auto", opacity: 1 }}
                                         exit={{ height: 0, opacity: 0 }}
                                         transition={{ duration: 0.3, ease: "easeInOut" }}
-                                        className="bg-white/10"
+                                        className="bg-white/0"
                                     >
                                         <p className="p-6 text-base text-white font-['PPMori']">
                                             {faq.answer}

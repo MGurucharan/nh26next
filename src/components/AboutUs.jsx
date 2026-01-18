@@ -350,7 +350,7 @@ const StatCard = ({ icon, number, label }) => {
   
   return (
     <div 
-      className="flex-1 mr-5 border border-white/20 rounded-3xl p-6 text-left bg-white/5 backdrop-blur-sm hover:border-white/40 transition-all duration-300"
+      className="flex-1 mr-5 border border-[#FF0000] border-opacity-30 rounded-3xl p-6 text-left bg-[#02093D] backdrop-blur-sm hover:shadow-[0_0_20px_rgba(255,0,0,0.5)] transition-all duration-300"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -375,7 +375,7 @@ const StatCard = ({ icon, number, label }) => {
           
           <p className="mt-2 text-gray-300 font-['PPMori']">{label}</p>
         </div>
-        <div className="w-16 h-16 flex items-center justify-center bg-white/10 rounded-2xl border border-white/10">
+        <div className="w-16 h-16 flex items-center justify-center bg-[#02093D] rounded-2xl border border-[#ff0000]">
           {icon}
         </div>
       </div>
@@ -385,10 +385,10 @@ const StatCard = ({ icon, number, label }) => {
 
 const FeatureCard = ({ title, description, iconSrc, altText }) => {
   return (
-    <div className="relative group bg-white/5 border border-[#FF0000] border-opacity-30 rounded-3xl p-8 text-left backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,0,0,0.5)] overflow-hidden transform-gpu flex flex-col items-center">
+    <div className="relative group bg-[#02093D] border border-[#FF0000] border-opacity-30 rounded-3xl p-8 text-left backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,0,0,0.5)] overflow-hidden transform-gpu flex flex-col items-center">
       
       <div className="relative z-20 flex flex-col items-center w-full">
-        <h3 className="text-2xl font-bold text-[#E0E7FF] text-center mb-6 font-['PPMori']">{title}</h3>
+        <h3 className="text-2xl font-bold text-[#ff0000] text-center mb-6 font-['PPMori']">{title}</h3>
         
         {/* Icon Container Wrapper */}
         <div className="relative mb-6 z-10">
@@ -396,14 +396,14 @@ const FeatureCard = ({ title, description, iconSrc, altText }) => {
            <div className="absolute inset-0 bg-white/10 rounded-2xl scale-100 group-hover:scale-[25] transition-transform duration-1000 ease-in-out origin-center z-0 pointer-events-none"></div>
 
            {/* Actual Icon Box */}
-           <div className="relative p-3 bg-white rounded-2xl border border-white/20 group-hover:border-white/50 transition-colors duration-300 z-10">
+           <div className="relative p-3 bg-[#02093D]  rounded-2xl border-1 border-[#ff0000] group-hover:border-white/50 transition-colors duration-300 z-10">
              <Image 
                src={iconSrc} 
                alt={altText} 
                width={48} 
                height={48} 
                className="w-12 h-12" 
-               style={{ filter: 'brightness(0) saturate(100%) invert(18%) sepia(93%) saturate(7383%) hue-rotate(357deg) brightness(102%) contrast(119%)' }} 
+               style={{ filter: 'brightness(0) invert(1)' }} 
              />
            </div>
         </div>
@@ -426,10 +426,10 @@ const AboutUs = () => {
   const reach = useCountUp(reachTarget, 2500)
 
   return (
-    <section className="w-full py-20 bg-[#02093D] text-white relative">
+    <section className="w-full py-20 bg-[#010524ff] text-white relative">
       
       <div className="max-w-[90vw] xl:max-w-7xl mx-auto px-6 relative z-10">
-        <h2 className="text-5xl font-bold text-center text-white mb-16 font-['PPMori'] tracking-tight">About Us</h2>
+        <h2 className="text-5xl text-[#ff0000] font-bold text-center mb-16 font-['PPMori'] tracking-tight">About Us</h2>
 
         <div className="flex flex-col lg:flex-row items-stretch gap-6 lg:gap-0 mb-12">
           {/* STAT CARD 1: Registrations */}
@@ -442,7 +442,8 @@ const AboutUs = () => {
                 alt="Registrations" 
                 width={32} 
                 height={32} 
-                className="w-8 h-8 brightness-0 invert" 
+                className="w-8 h-8" 
+                style={{ filter: 'brightness(0) invert(1)' }}
               />
             }
           />        
@@ -457,7 +458,8 @@ const AboutUs = () => {
                 alt="On-Campus Participations" 
                 width={32} 
                 height={32} 
-                className="w-8 h-8 brightness-0 invert" 
+                className="w-8 h-8" 
+                style={{ filter: 'brightness(0) invert(1)' }} 
               />
             }
           />
@@ -472,7 +474,8 @@ const AboutUs = () => {
                 alt="Reach on Social Media" 
                 width={32} 
                 height={32} 
-                className="w-8 h-8 brightness-0 invert" 
+                className="w-8 h-8" 
+                style={{ filter: 'brightness(0) invert(1)' }} 
               />
             }
           />

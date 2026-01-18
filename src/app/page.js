@@ -31,31 +31,45 @@ const Home = () => {
   return (
     <main className="relative bg-black min-h-screen">
       <Navbar />
-      <div className="-mt-[32px] w-full relative z-0">
+      <div className="-mt-[60px] w-full relative z-0">
         <Hero/>
       </div>
-      <AboutUs />
-      <Tracks3/>
-      <Prizes />
-      <Sponsors 
-        textAutoHide={true}
-        enableStars={true}
-        enableSpotlight={true}
-        enableBorderGlow={true}
-        enableTilt={true}
-        enableMagnetism={true}
-        clickEffect={true}
-        spotlightRadius={300}
-        particleCount={12}
-      />
+      <section id="about">
+        <AboutUs />
+      </section>
+      <section id="tracks">
+        <Tracks3/>
+      </section>
+      <section id="prizes">
+        <Prizes />
+      </section>
+      <section id="sponsors">
+        <Sponsors 
+          textAutoHide={true}
+          enableStars={true}
+          enableSpotlight={true}
+          enableBorderGlow={true}
+          enableTilt={true}
+          enableMagnetism={true}
+          clickEffect={true}
+          spotlightRadius={300}
+          particleCount={12}
+        />
+      </section>
       {/* <Teams /> */}
-      <Teams2/>
+      <section id="teams">
+        <Teams2/>
+      </section>
       {/* Container to center the card so it doesn't stretch full width */}
       {/* <div className="flex justify-center py-20">
          <FlipCard data={data} />
       </div> */}
-      <Faqs />
-      <ContactUs />
+      <section id="faqs">
+        <Faqs />
+      </section>
+      <section id="contact">
+        <ContactUs />
+      </section>
     </main> 
   )
 }
